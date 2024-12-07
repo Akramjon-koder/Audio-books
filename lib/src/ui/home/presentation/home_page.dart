@@ -1,5 +1,7 @@
 import 'package:audiobook/src/extensions/size_extensions.dart';
+import 'package:audiobook/src/helpers/nav_helper.dart';
 import 'package:audiobook/src/theme/apptheme.dart';
+import 'package:audiobook/src/ui/audio_play/play_audio.dart';
 import 'package:audiobook/src/ui/home/home.dart';
 import 'package:audiobook/src/ui/widgets/screen_widget.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,6 +40,10 @@ class BooksScreen extends StatelessWidget {
         itemBuilder: (context, index) => BookItem(
           data: state.books[index],
           loadController: state.loadingAudios[state.books[index].id],
+          tapCallBack: (){
+            context.read<BooksBloc>().add(SetBooksIndexEvent(index));
+            push(context, AudioPage());
+          },
         ),
       ),
     );

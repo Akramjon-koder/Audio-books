@@ -1,5 +1,5 @@
-class AudioModel {
-  AudioModel({
+class BookModel {
+  BookModel({
     required this.id,
     this.author = '',
     this.title = '',
@@ -18,7 +18,7 @@ class AudioModel {
 
   int position;// milliseconds
 
-  factory AudioModel.fromJson(Map<String, dynamic> json) => AudioModel(
+  factory BookModel.fromJson(Map<String, dynamic> json) => BookModel(
     id: json["id"].toString(),
     author: json["author"].toString(),
     title: json["title"].toString(),
@@ -28,7 +28,7 @@ class AudioModel {
     isLoaded: json["isLoaded"] is bool ? json["isLoaded"] : false,
   );
 
-  AudioModel copyWith({
+  BookModel copyWith({
     String? id,
     String? title,
     String? author,
@@ -36,7 +36,7 @@ class AudioModel {
     String? audio,
     int? position,
     bool? isLoaded,
-  }) => AudioModel(
+  }) => BookModel(
     id: id ?? this.id,
     title: title ?? this.title,
     author: author ?? this.author,
