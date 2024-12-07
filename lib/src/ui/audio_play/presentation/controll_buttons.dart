@@ -1,23 +1,28 @@
 
+import 'package:audiobook/src/extensions/size_extensions.dart';
+import 'package:audiobook/src/theme/apptheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 
-import '../../../home.dart';
+import '../bloc/bloc.dart';
 import 'common.dart';
 
 class ControlButtons extends StatelessWidget {
-
-  const ControlButtons({Key? key}) : super(key: key);
+  const ControlButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final streams = context.read<BooksBloc>().state.playStreams!;
+    final streams = context.read<PlayerBloc>().state.playStreams!;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
-          icon: const Icon(Icons.volume_up),
+          icon: Icon(
+            Icons.volume_up,
+            color: theme.text,
+          ),
           onPressed: () {
             showSliderDialog(
               context: context,
@@ -26,16 +31,23 @@ class ControlButtons extends StatelessWidget {
               min: 0.0,
               max: 1.0,
               stream: streams.volumeStream,
-              onChanged: (v) => context.read<BooksBloc>().add(SetVolumeEvent(v)),
+              onChanged: (v) => context.read<PlayerBloc>().add(SetVolumeEvent(v)),
             );
           },
         ),
         StreamBuilder<SequenceState?>(
           stream: streams.sequenceStateStream,
           builder: (context, snapshot) => IconButton(
-            icon: const Icon(Icons.skip_previous),
-            onPressed: context.read<BooksBloc>().state.playIndex > 0
-                ? () => context.read<BooksBloc>().add(SeektoPervousEvent()) : null,
+            icon: FaIcon(
+              FontAwesomeIcons.backward,
+              color: context.read<PlayerBloc>().state.playIndex > 0 ? theme.text : theme.line,
+            ),
+            iconSize: 26.a,
+            onPressed: (){
+              if(context.read<PlayerBloc>().state.playIndex > 0){
+                context.read<PlayerBloc>().add(SeektoPervousEvent());
+              }
+            },
           ),
         ),
         StreamBuilder<PlayerState>(
@@ -54,21 +66,30 @@ class ControlButtons extends StatelessWidget {
               );
             } else if (playing != true) {
               return IconButton(
-                icon: const Icon(Icons.play_arrow),
-                iconSize: 64.0,
-                onPressed: () => context.read<BooksBloc>().add(PlayEvent()),
+                icon: FaIcon(
+                  FontAwesomeIcons.play,
+                  color: theme.text,
+                ),
+                iconSize: 32.a,
+                onPressed: () => context.read<PlayerBloc>().add(PlayEvent()),
               );
             } else if (processingState != ProcessingState.completed) {
               return IconButton(
-                icon: const Icon(Icons.pause),
-                iconSize: 64.0,
-                onPressed: () => context.read<BooksBloc>().add(PauseEvent()),
+                icon: FaIcon(
+                  FontAwesomeIcons.pause,
+                  color: theme.text,
+                ),
+                iconSize: 32.a,
+                onPressed: () => context.read<PlayerBloc>().add(PauseEvent()),
               );
             } else {
               return IconButton(
-                icon: const Icon(Icons.replay),
-                iconSize: 64.0,
-                onPressed: () => context.read<BooksBloc>().add(RestartEvent()),
+                icon: FaIcon(
+                  FontAwesomeIcons.rotateLeft,
+                  color: theme.text,
+                ),
+                iconSize: 32.a,
+                onPressed: () => context.read<PlayerBloc>().add(RestartEvent()),
               );
             }
           },
@@ -76,16 +97,23 @@ class ControlButtons extends StatelessWidget {
         StreamBuilder<SequenceState?>(
           stream: streams.sequenceStateStream,
           builder: (context, snapshot) => IconButton(
-            icon: const Icon(Icons.skip_next),
-            onPressed: context.read<BooksBloc>().state.playIndex < context.read<BooksBloc>().state.books.length - 1
-                ? () => context.read<BooksBloc>().add(SeektoNextEvent()) : null,
+            icon: FaIcon(
+              FontAwesomeIcons.forward,
+              color: context.read<PlayerBloc>().state.haveNext
+                  ? theme.text : theme.line,
+            ),
+            iconSize: 26.a,
+            onPressed: context.read<PlayerBloc>().state.haveNext
+                ? () => context.read<PlayerBloc>().add(SeektoNextEvent()) : null,
           ),
         ),
         StreamBuilder<double>(
           stream: streams.speedStream,
           builder: (context, snapshot) => IconButton(
             icon: Text("${snapshot.data?.toStringAsFixed(1)}x",
-                style: const TextStyle(fontWeight: FontWeight.bold)),
+                style: theme.textStyle.copyWith(
+                  fontWeight: FontWeight.bold,
+                )),
             onPressed: () {
               showSliderDialog(
                 context: context,
@@ -94,7 +122,7 @@ class ControlButtons extends StatelessWidget {
                 min: 0.5,
                 max: 1.5,
                 stream: streams.speedStream,
-                onChanged: (v) => context.read<BooksBloc>().add(SetSpeedEvent(v)),
+                onChanged: (v) => context.read<PlayerBloc>().add(SetSpeedEvent(v)),
               );
             },
           ),

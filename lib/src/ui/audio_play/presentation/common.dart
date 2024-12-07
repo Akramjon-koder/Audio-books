@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:audiobook/src/extensions/size_extensions.dart';
+import 'package:audiobook/src/theme/apptheme.dart';
 import 'package:flutter/material.dart';
 
 class SeekBar extends StatefulWidget {
@@ -101,7 +103,12 @@ class SeekBarState extends State<SeekBar> {
                   .firstMatch("$_remaining")
                   ?.group(1) ??
                   '$_remaining',
-              style: Theme.of(context).textTheme.bodySmall),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: theme.text,
+              ) ?? theme.textStyle.copyWith(
+                fontSize: 12.a,
+              ),
+          ),
         ),
       ],
     );

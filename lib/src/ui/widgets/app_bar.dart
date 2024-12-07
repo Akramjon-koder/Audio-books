@@ -65,7 +65,7 @@ class BackAppbar extends StatelessWidget {
                         child: FaIcon(
                           FontAwesomeIcons.arrowLeft,
                           color: Colors.white,
-                          size: 24.a,
+                          size: 18.a,
                         ),
                       ),
                 ),

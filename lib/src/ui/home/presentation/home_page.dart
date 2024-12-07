@@ -1,13 +1,13 @@
 import 'package:audiobook/src/extensions/size_extensions.dart';
 import 'package:audiobook/src/helpers/nav_helper.dart';
 import 'package:audiobook/src/theme/apptheme.dart';
-import 'package:audiobook/src/ui/audio_play/play_audio.dart';
 import 'package:audiobook/src/ui/home/home.dart';
 import 'package:audiobook/src/ui/widgets/screen_widget.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../audio_play/presentation/play_audio.dart';
+import '../../widgets/enums.dart';
 import 'book_item.dart';
 
 class BooksScreen extends StatelessWidget {
@@ -20,7 +20,7 @@ class BooksScreen extends StatelessWidget {
       backWidget: SizedBox(),
       title: 'Audio kitoblar',
       child: state.books.isEmpty ? Center(
-        child: state.status == BooksScreenStatus.loading ? CupertinoActivityIndicator(
+        child: state.status == ScreenStatus.loading ? CupertinoActivityIndicator(
           color: theme.grey,
         ) : Text(
           "Kitoblar mavjud emas.",
@@ -40,10 +40,10 @@ class BooksScreen extends StatelessWidget {
         itemBuilder: (context, index) => BookItem(
           data: state.books[index],
           loadController: state.loadingAudios[state.books[index].id],
-          tapCallBack: (){
-            context.read<BooksBloc>().add(SetBooksIndexEvent(index));
-            push(context, AudioPage());
-          },
+          tapCallBack: () => push(context, AudioPage(
+            data: state.books,
+            index: index,
+          )),
         ),
       ),
     );

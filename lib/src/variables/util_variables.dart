@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 
 bool isDark = true; // app theme is dark this value = true else value = false
 
@@ -22,3 +23,9 @@ const Map<DioExceptionType,String> exeptionMessages = {
   DioExceptionType.sendTimeout : 'Serverga malumot yuborib bo\'lmadi.',
   DioExceptionType.receiveTimeout : 'Serverdan jabob qaytmadi.'
 };
+
+const cycleModes = [
+  LoopMode.off,
+  LoopMode.all,
+  LoopMode.one,
+];
