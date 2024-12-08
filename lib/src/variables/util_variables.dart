@@ -9,6 +9,9 @@ String lan = 'uz';
 abstract class DataKeys{
   static const String dark = 'dark_mode';
   static const String language = 'app_language';
+  static const String downloadedBooks = 'downloaded_books';
+  static const String lastPlayedBookId = 'last_played_book_id';
+  static const String lastPlayedBookPosition = 'last_played_book_position';
 }
 
 final ValueNotifier<double> bottom = ValueNotifier(0);

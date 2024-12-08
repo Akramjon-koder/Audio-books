@@ -49,5 +49,18 @@
     <array>
     	<string>audio</string>
     </array>
+    <key>LSSupportsOpeningDocumentsInPlace</key> <true/>
+    <key>UIFileSharingEnabled</key> <true/>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>It need to use audios</string>
+    <key>NSPhotoLibraryAddUsageDescription</key>
+    <string></string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Permit to download media files</string>
 </dict>
 </plist>

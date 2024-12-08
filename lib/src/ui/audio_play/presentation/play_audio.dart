@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:audiobook/src/extensions/size_extensions.dart';
 import 'package:audiobook/src/theme/apptheme.dart';
 import 'package:audiobook/src/ui/home/home.dart';
 import 'package:audiobook/src/ui/widgets/screen_widget.dart';
 import 'package:audiobook/src/variables/icons.dart';
 import 'package:audiobook/src/variables/util_variables.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,6 +44,7 @@ class _AudioPageState extends State<AudioPage> {
     context.read<PlayerBloc>().add(InitEvent(
       data: widget.data,
       index: widget.index,
+      position: widget.position,
     ));
     super.initState();
   }
@@ -57,8 +61,10 @@ class _AudioPageState extends State<AudioPage> {
         ),
       ): PopScope(
         onPopInvokedWithResult: (canPop, result){
+          if(position != Duration.zero){
+            context.read<BooksBloc>().add(SetLastPlayedEvent(index: index, position: position));
+          }
           context.read<PlayerBloc>().add(DisposeEvent());
-          print('pop');
         },
         child: SingleChildScrollView(
           child: Column(
@@ -73,11 +79,16 @@ class _AudioPageState extends State<AudioPage> {
                       if (state?.sequence.isEmpty ?? true) {
                         return const SizedBox();
                       }
-                      final metadata = state!.currentSource!.tag as MediaItem;
-                      return Image.network(
+                      final path = widget.data[state?.currentIndex ?? index].image;
+                      return path.substring(0,4) == 'http' ? CachedNetworkImage(
+                        imageUrl: path,
                         width: 500.w,
                         height: 600.w,
-                        metadata.artUri.toString(),
+                        fit: BoxFit.cover,
+                      ) : Image.file(
+                        File(path),
+                        width: 500.w,
+                        height: 600.w,
                         fit: BoxFit.cover,
                       );
                     },

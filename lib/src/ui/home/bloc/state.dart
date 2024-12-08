@@ -2,26 +2,28 @@ part of 'bloc.dart';
 
 final class BooksScreenState{
   final List<BookModel> books;
-  final Map<String, LoadListner> loadingAudios;
   final ScreenStatus status;
+  final int? lastPlayedIndex;
+  final Duration lastPlayedDuration;
 
   BooksScreenState({
     this.books = const[],
-    this.loadingAudios = const{},
     this.status = ScreenStatus.loading,
+    this.lastPlayedIndex,
+    this.lastPlayedDuration = Duration.zero,
   });
 
   BooksScreenState copyWith({
     List<BookModel>? books,
-    Map<String, LoadListner>? loadingAudios,
     ScreenStatus? status,
-    PlayStreams? playStreams,
     int? playIndex,
+    int? lastPlayedIndex,
+    Duration? lastPlayedDuration,
   }) => BooksScreenState(
     books: books ?? this.books,
-    loadingAudios: loadingAudios ?? this.loadingAudios,
     status: status ?? this.status,
+    lastPlayedIndex: lastPlayedIndex ?? this.lastPlayedIndex,
+    lastPlayedDuration: lastPlayedDuration ?? this.lastPlayedDuration,
   );
 }
 
-typedef LoadListner = ValueListenableBuilder<double>;

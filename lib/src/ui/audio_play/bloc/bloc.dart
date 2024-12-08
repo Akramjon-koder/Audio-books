@@ -58,13 +58,22 @@ class PlayerBloc extends Bloc<AudioEvent, AudioScreenState> {
     ));
 
     /// set playlist
-    _playlist = ConcatenatingAudioSource(children: List<AudioSource>.generate(event.data.length, (index) => AudioSource.uri(
+    _playlist = ConcatenatingAudioSource(children: List<AudioSource>.generate(event.data.length, (index) => event.data[index].isLoaded
+        ? AudioSource.file(
+      event.data[index].audio,
+      tag: MediaItem(
+        id: event.data[index].id,
+        album: event.data[index].author,
+        title: event.data[index].title,
+        artUri: Uri.parse(event.data[index].imageUrl),
+      ),
+    ) : AudioSource.uri(
       Uri.parse(event.data[index].audio),
       tag: MediaItem(
         id: event.data[index].id,
         album: event.data[index].author,
         title: event.data[index].title,
-        artUri: Uri.parse(event.data[index].image),
+        artUri: Uri.parse(event.data[index].imageUrl),
       ),
     )));
     if(session == null){
@@ -77,11 +86,11 @@ class PlayerBloc extends Bloc<AudioEvent, AudioScreenState> {
         });
     try {
       await _player.setAudioSource(_playlist);
-      _player.seek(event.position, index: event.index);
+      await _player.seek(event.position, index: event.index);
       emit(state.copyWith(
         screenStatus: ScreenStatus.ready,
-        playIndex: event.index,
-        haveNext: state.playIndex < _playlist.length - 2,
+        playIndex: _player.currentIndex,
+        haveNext: _player.hasNext,
       ));
     } catch (e, stackTrace) {
       print("Error loading playlist: $e");
@@ -89,11 +98,11 @@ class PlayerBloc extends Bloc<AudioEvent, AudioScreenState> {
     }
   }
 
-  void _setAudio(SetAudioIndexEvent event, Emitter<AudioScreenState> emit){
-    _player.seek(event.position, index: event.index);
+  void _setAudio(SetAudioIndexEvent event, Emitter<AudioScreenState> emit) async {
+    await _player.seek(event.position, index: event.index);
     emit(state.copyWith(
-      playIndex: event.index,
-      haveNext: event.index < _playlist.length - 1,
+      playIndex: _player.currentIndex,
+      haveNext: _player.hasNext,
     ));
   }
 
@@ -101,19 +110,20 @@ class PlayerBloc extends Bloc<AudioEvent, AudioScreenState> {
 
   void _setSpeed(SetSpeedEvent event, Emitter<AudioScreenState> emit) => _player.setSpeed(event.speed);
 
-  void _seekToPrevious(SeektoPervousEvent event, Emitter<AudioScreenState> emit){
+  void _seekToPrevious(SeektoPervousEvent event, Emitter<AudioScreenState> emit) async {
+    await _player.seekToPrevious();
     emit(state.copyWith(
-      playIndex: state.playIndex - 1,
+      playIndex: _player.currentIndex,
+      haveNext: _player.hasNext,
     ));
-    _player.seekToPrevious();
   }
 
-  void _seekToNext(SeektoNextEvent event, Emitter<AudioScreenState> emit) {
+  void _seekToNext(SeektoNextEvent event, Emitter<AudioScreenState> emit) async {
+    await _player.seekToNext();
     emit(state.copyWith(
-      playIndex: state.playIndex + 1,
-      haveNext: state.playIndex < _playlist.length - 2,
+      playIndex: _player.currentIndex,
+      haveNext: _player.hasNext,
     ));
-    _player.seekToNext();
   }
 
   void _play(PlayEvent event, Emitter<AudioScreenState> emit) => _player.play();
